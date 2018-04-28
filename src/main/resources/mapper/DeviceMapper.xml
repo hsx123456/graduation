@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hsx.mapper.DeviceMapper">
+    <sql id="columnList">
+        id , emp_id , dev_name , dev_type , price , status , x , y
+    </sql>
+
+    <resultMap id="myResMap" type="com.hsx.model.Device">
+        <id column="id" property="id"></id>
+        <result column="dev_name" property="devName"/>
+        <result column="dev_type" property="devType"/>
+        <result column="price" property="price"/>
+        <result column="status" property="status"/>
+        <result column="x" property="x"/>
+        <result column="y" property="y"/>
+
+        <association property="emp" select="com.hsx.mapper.EmployeeMapper.getEmpById" column="emp_id"></association>
+    </resultMap>
+
+    <select id="getDevAll" resultMap="myResMap">
+        SELECT
+        <include refid="columnList"/>
+        FROM devices
+    </select>
+
+    <select id="getDevsByempId" resultType="com.hsx.model.Device">
+        SELECT
+        <include refid="columnList"/>
+        FROM devices
+        WHERE emp_id=#{empId}
+
+    </select>
+
+    <select id="getDevByTypeAndStatus" resultMap="myResMap">
+        SELECT
+        <include refid="columnList"/>
+        FROM devices
+        <where>
+            <if test="devType!=null">
+                dev_type=#{devType}
+            </if>
+            <if test="status!=null">
+                <if test="status==1">
+                    AND status=#{status}
+                </if>
+                <if test="status==2">
+                    AND status!=1
+                </if>
+
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="addDevice" parameterType="com.hsx.model.Device" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO devices(dev_name,dev_type,price,status,x,y)
+        VALUES (
+            #{devName},#{devType},#{price},#{status},#{x},#{y}
+        )
+    </insert>
+
+    <select id="getDevById" resultMap="myResMap">
+        SELECT
+        <include refid="columnList"/>
+        FROM devices WHERE id=#{id}
+    </select>
+
+    <update id="updateDev">
+        UPDATE devices SET
+        dev_name=#{devName},dev_type=#{devType},status=#{status},price=#{price},x=#{x},y=#{y}
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateDevOnlyEmpId">
+        UPDATE devices SET
+        emp_id=#{emp.id},status=#{status}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteDevById">
+        DELETE FROM devices
+        WHERE id=#{id}
+    </delete>
+
+    <delete id="deleteDevBatch" parameterType="java.util.List">
+        DELETE FROM devices
+        WHERE id IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

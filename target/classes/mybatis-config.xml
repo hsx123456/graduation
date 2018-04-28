@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--分页合理化-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
+
+
+    <mappers>
+        <mapper resource="mapper/EmployeeMapper.xml"></mapper>
+        <mapper resource="mapper/DepartmentMapper.xml"></mapper>
+        <mapper resource="mapper/DeviceMapper.xml"></mapper>
+      </mappers>
+
+
+
+
+</configuration>
